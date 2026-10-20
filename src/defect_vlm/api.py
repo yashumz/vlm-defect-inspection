@@ -26,8 +26,15 @@ def get_inspector():
     """Load the model once, on first request. Tests replace this with a fake."""
     global _inspector
     if _inspector is None:
-        from defect_vlm.inference import Inspector
-        _inspector = Inspector(os.environ["ADAPTER_DIR"], mode=os.environ.get("QUANT", "4bit"))
+        adapter_dir = os.environ.get("ADAPTER_DIR")
+        if not adapter_dir:
+            raise HTTPException(503, "Model not configured: set the ADAPTER_DIR environment variable "
+                                     "to the folder with the LoRA adapters, then restart the server.")
+        try:
+            from defect_vlm.inference import Inspector
+        except ImportError as e:
+            raise HTTPException(503, f"Model libraries not installed ({e.name}). Install unsloth on a GPU machine.")
+        _inspector = Inspector(adapter_dir, mode=os.environ.get("QUANT", "4bit"))
     return _inspector
 
 

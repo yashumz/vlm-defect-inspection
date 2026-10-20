@@ -78,3 +78,13 @@ def test_prompt_matches_training_format():
 def test_parse_json_handles_fences():
     assert parse_json('```json\n{"defective": false}\n```') == {"defective": False}
     assert parse_json("no json") is None
+
+
+def test_unconfigured_server_gives_clear_503(monkeypatch):
+    from defect_vlm import api
+    app.dependency_overrides.clear()
+    monkeypatch.delenv("ADAPTER_DIR", raising=False)
+    monkeypatch.setattr(api, "_inspector", None)
+    r = TestClient(app).post("/inspect", data={"category": "screw"},
+                             files={"image": ("part.png", png_bytes(), "image/png")})
+    assert r.status_code == 503 and "ADAPTER_DIR" in r.json()["detail"]
