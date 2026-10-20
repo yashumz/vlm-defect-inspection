@@ -1,0 +1,4 @@
+mode,load_gb,peak_gb,median_ms,p90_ms,macro_auroc,defective_acc,type_acc,valid_json
+4bit,1.67,2.02,2812,2964,0.89,0.76,0.39,1.0
+8bit,3.24,3.35,5052,5365,0.87,0.727,0.343,1.0
+16bit,4.54,4.66,2039,2175,0.875,0.727,0.371,1.0
